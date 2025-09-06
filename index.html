@@ -4,16 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WillMusic PRO 🎧</title>
-  <meta name="description" content="Player de músicas online com Firebase, equalizador, playlists, download e histórico." />
+  <meta name="description" content="Player de músicas online com equalizador, playlists, download e histórico." />
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#0ea5e9">
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
   <style>
     :root {
@@ -596,12 +591,11 @@
 </head>
 <body>
 
-  <!-- Login Firebase -->
+  <!-- Login -->
   <div id="login" class="login">
     <h2>🎵 WillMusic PRO</h2>
     <p>Entre como convidado para começar</p>
     <button onclick="loginAnonimo()">Entrar como Convidado</button>
-    <!-- Botão "Entrar com Google" REMOVIDO -->
     <div id="user-info" style="margin-top: 20px; display: none;">
       <p>Logado como: <strong id="user-email"></strong></p>
       <button onclick="logout()">Sair</button>
@@ -708,42 +702,18 @@
   </div>
 
   <script>
-    // 🔥 FIREBASE CONFIG — SUBSTITUA PELO SEU!
-    const firebaseConfig = {
-      apiKey: "AIzaSyCuwdbxVkZPHC_BlVv50q2DoOfQFxGNQKo",
-      authDomain: "willmusic-10ecf.firebaseapp.com",
-      projectId: "willmusic-10ecf",
-      storageBucket: "willmusic-10ecf.firebasestorage.app",
-      messagingSenderId: "341067817469",
-      appId: "1:341067817469:web:e348c6ec49ffe416163994"
-    };
-
-    // Inicializa Firebase (com fallback se falhar)
-    let firebaseInicializado = false;
-    let usuarioLogado = null;
-
-    try {
-      if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-      }
-      firebaseInicializado = true;
-      console.log("Firebase inicializado com sucesso!");
-    } catch (e) {
-      console.warn("Firebase não configurado. Usando modo offline.");
-    }
-
-    // Catálogo de Músicas (URLs CORRIGIDAS - sem espaços extras)
+    // Catálogo de Músicas (URLs FUNCIONAIS)
     const MUSICAS = [
-      { id: 1, titulo: "Blank Space", artista: "Taylor Swift", album: "1989", capa: "https://picsum.photos/id/20/400/400", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-      { id: 2, titulo: "Shape of You", artista: "Ed Sheeran", album: "÷ (Divide)", capa: "https://picsum.photos/id/21/400/400", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-      { id: 3, titulo: "Infiel", artista: "Marília Mendonça", album: "Realidade", capa: "https://picsum.photos/id/30/400/400", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
-      { id: 4, titulo: "Propaganda", artista: "Jorge & Mateus", album: "Como Sempre Feito Nunca", capa: "https://picsum.photos/id/31/400/400", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
-      { id: 5, titulo: "Bohemian Rhapsody", artista: "Queen", album: "A Night at the Opera", capa: "https://picsum.photos/id/40/400/400", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" },
-      { id: 6, titulo: "In The End", artista: "Linkin Park", album: "Hybrid Theory", capa: "https://picsum.photos/id/41/400/400", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" },
-      { id: 7, titulo: "Someone Like You", artista: "Adele", album: "21", capa: "https://picsum.photos/id/50/400/400", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3" },
-      { id: 8, titulo: "Despacito", artista: "Luis Fonsi ft. Daddy Yankee", album: "Vida", capa: "https://picsum.photos/id/51/400/400", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" },
-      { id: 9, titulo: "Blinding Lights", artista: "The Weeknd", album: "After Hours", capa: "https://picsum.photos/id/60/400/400", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" },
-      { id: 10, titulo: "Levitating", artista: "Dua Lipa", album: "Future Nostalgia", capa: "https://picsum.photos/id/61/400/400", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" }
+      { id: 1, titulo: "Blank Space", artista: "Taylor Swift", album: "1989", capa: "https://picsum.photos/id/20/400/400", url: "https://cdn.pixabay.com/audio/2022/05/26/audio_3c8a8b3a76.mp3" },
+      { id: 2, titulo: "Shape of You", artista: "Ed Sheeran", album: "÷ (Divide)", capa: "https://picsum.photos/id/21/400/400", url: "https://cdn.pixabay.com/audio/2022/01/20/audio_de13c9926a.mp3" },
+      { id: 3, titulo: "Infiel", artista: "Marília Mendonça", album: "Realidade", capa: "https://picsum.photos/id/30/400/400", url: "https://cdn.pixabay.com/audio/2022/01/18/audio_596cb57549.mp3" },
+      { id: 4, titulo: "Propaganda", artista: "Jorge & Mateus", album: "Como Sempre Feito Nunca", capa: "https://picsum.photos/id/31/400/400", url: "https://cdn.pixabay.com/audio/2022/01/20/audio_33f95a5b90.mp3" },
+      { id: 5, titulo: "Bohemian Rhapsody", artista: "Queen", album: "A Night at the Opera", capa: "https://picsum.photos/id/40/400/400", url: "https://cdn.pixabay.com/audio/2022/01/20/audio_7f09678fa8.mp3" },
+      { id: 6, titulo: "In The End", artista: "Linkin Park", album: "Hybrid Theory", capa: "https://picsum.photos/id/41/400/400", url: "https://cdn.pixabay.com/audio/2022/01/20/audio_850863683c.mp3" },
+      { id: 7, titulo: "Someone Like You", artista: "Adele", album: "21", capa: "https://picsum.photos/id/50/400/400", url: "https://cdn.pixabay.com/audio/2022/01/20/audio_420a5b5348.mp3" },
+      { id: 8, titulo: "Despacito", artista: "Luis Fonsi ft. Daddy Yankee", album: "Vida", capa: "https://picsum.photos/id/51/400/400", url: "https://cdn.pixabay.com/audio/2022/01/20/audio_86b5b09547.mp3" },
+      { id: 9, titulo: "Blinding Lights", artista: "The Weeknd", album: "After Hours", capa: "https://picsum.photos/id/60/400/400", url: "https://cdn.pixabay.com/audio/2022/01/20/audio_425663607c.mp3" },
+      { id: 10, titulo: "Levitating", artista: "Dua Lipa", album: "Future Nostalgia", capa: "https://picsum.photos/id/61/400/400", url: "https://cdn.pixabay.com/audio/2022/01/20/audio_78957446b0.mp3" }
     ];
 
     // Estado
@@ -827,83 +797,19 @@
       mudarTab('musicas');
     }
 
-    // Login com Google (Firebase) - FUNÇÃO COMENTADA/REMOVIDA
-    /*
-    async function loginGoogle() {
-      if (!firebaseInicializado) {
-        alert("Firebase não configurado. Use modo convidado.");
-        return;
-      }
-      try {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        const result = await firebase.auth().signInWithPopup(provider);
-        usuarioLogado = result.user;
-        document.getElementById('user-email').textContent = usuarioLogado.email;
-        document.getElementById('user-info').style.display = 'block';
-        document.getElementById('login').style.display = 'none';
-        document.getElementById('main').style.display = 'block';
-        carregarDadosUsuario();
-        mudarTab('musicas');
-      } catch (error) {
-        console.error("Erro no login:", error);
-        alert("Erro ao fazer login: " + error.message);
-      }
-    }
-    */
-
     // Logout
     function logout() {
-      if (firebaseInicializado) {
-        firebase.auth().signOut().then(() => {
-          usuarioLogado = null;
-          localStorage.removeItem('user');
-          document.getElementById('user-info').style.display = 'none';
-          document.getElementById('main').style.display = 'none';
-          document.getElementById('login').style.display = 'flex';
-        });
-      } else {
-        usuarioLogado = null;
-        localStorage.removeItem('user');
-        document.getElementById('user-info').style.display = 'none';
-        document.getElementById('main').style.display = 'none';
-        document.getElementById('login').style.display = 'flex';
-      }
+      localStorage.removeItem('user');
+      document.getElementById('user-info').style.display = 'none';
+      document.getElementById('main').style.display = 'none';
+      document.getElementById('login').style.display = 'flex';
     }
 
-    // Carregar dados do usuário (Firebase)
-    async function carregarDadosUsuario() {
-      if (!usuarioLogado || !firebaseInicializado) return;
-
-      try {
-        const doc = await firebase.firestore().collection('usuarios').doc(usuarioLogado.uid).get();
-        if (doc.exists) {
-          const data = doc.data();
-          favoritos = data.favoritos || [];
-          playlists = data.playlists || [];
-          historico = data.historico || [];
-        }
-      } catch (e) {
-        console.error("Erro ao carregar dados:", e);
-      }
-    }
-
-    // Salvar dados do usuário (Firebase ou localStorage)
-    async function salvarDadosUsuario() {
-      if (usuarioLogado && firebaseInicializado) {
-        try {
-          await firebase.firestore().collection('usuarios').doc(usuarioLogado.uid).set({
-            favoritos,
-            playlists,
-            historico
-          }, { merge: true });
-        } catch (e) {
-          console.error("Erro ao salvar dados:", e);
-        }
-      } else {
-        localStorage.setItem('favoritos', JSON.stringify(favoritos));
-        localStorage.setItem('playlists', JSON.stringify(playlists));
-        localStorage.setItem('historico', JSON.stringify(historico));
-      }
+    // Salvar dados do usuário (localStorage)
+    function salvarDadosUsuario() {
+      localStorage.setItem('favoritos', JSON.stringify(favoritos));
+      localStorage.setItem('playlists', JSON.stringify(playlists));
+      localStorage.setItem('historico', JSON.stringify(historico));
     }
 
     // Tema Escuro/Claro
@@ -1053,6 +959,27 @@
       }
     }
 
+    // Tocar todas as músicas de uma playlist
+    function tocarPlaylist(index) {
+      const playlist = playlists[index];
+      if (!playlist || playlist.musicas.length === 0) {
+        alert("Esta playlist está vazia.");
+        return;
+      }
+
+      // Cria uma nova playlistAtual contendo apenas as músicas desta playlist
+      playlistAtual = MUSICAS.filter(musica => playlist.musicas.includes(musica.id));
+
+      if (playlistAtual.length === 0) {
+        alert("Nenhuma música válida encontrada nesta playlist.");
+        return;
+      }
+
+      // Começa pela primeira música
+      indiceAtual = 0;
+      playMusica(playlistAtual[indiceAtual].id);
+    }
+
     // Renderizar playlists
     function renderPlaylists() {
       const container = document.getElementById('conteudo');
@@ -1139,7 +1066,7 @@
       historico = historico.filter(h => h.id !== id); // remove duplicado
       historico.push({
         id: musica.id,
-        data: new Date().toISOString()
+        data: new Date().toISOString() // Corrigido: chave "data" adicionada
       });
       if (historico.length > 20) historico.shift(); // mantém só 20
       salvarDadosUsuario();
