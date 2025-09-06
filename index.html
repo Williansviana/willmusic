@@ -1035,21 +1035,28 @@
       salvarDadosUsuario();
       renderConteudo();
     }
-    // Tocar música - ✅ TOTALMENTE FUNCIONAL
+    // Tocar música - ✅ CONTROLE DE PLAY TOTALMENTE REFEITO E FUNCIONAL
     function playMusica(id) {
       const musica = MUSICAS.find(m => m.id === id);
-      if (!musica) return;
+      if (!musica) {
+        alert("Música não encontrada.");
+        return;
+      }
       // Atualizar histórico
       historico = historico.filter(h => h.id !== id);
       historico.push({
         id: musica.id,
-        data: new Date().toISOString() // ✅ Correto
+         new Date().toISOString()
       });
       if (historico.length > 20) historico.shift();
       salvarDadosUsuario();
       // Define playlist
       playlistAtual = MUSICAS;
       indiceAtual = playlistAtual.findIndex(m => m.id === id);
+      if (indiceAtual === -1) {
+        alert("Erro: Música não encontrada na playlist.");
+        return;
+      }
       // Atualiza modal
       document.getElementById('modalCover').src = musica.capa;
       document.getElementById('modalTitulo').textContent = musica.titulo;
@@ -1058,10 +1065,14 @@
       // Configura o áudio
       audio.src = musica.url;
       audio.volume = parseFloat(volumeSlider.value);
+      // Reseta o progresso
+      progressBar.style.width = '0%';
+      progressMiniBar.style.width = '0%';
+      document.getElementById('currentTime').textContent = '0:00';
       // Tenta reproduzir
       audio.play()
         .then(() => {
-          // Sucesso
+          // Sucesso na reprodução
           document.getElementById('modal').classList.add('show');
           updateMiniPlayer(musica);
           // Inicia equalizador
@@ -1071,11 +1082,15 @@
             }
             initEqualizer();
           }, 500);
+          // Atualiza botão de play
+          document.getElementById('miniPlayBtn').textContent = '⏸️';
         })
         .catch(e => {
-          // Erro
+          // Falha na reprodução
           console.error("Erro ao reproduzir:", e);
-          alert(`❌ Falha ao carregar "${musica.titulo}".\nErro: ${e.message}`);
+          alert(`❌ Falha ao carregar "${musica.titulo}".\nVerifique sua conexão com a internet.`);
+          // Garante que o botão de play esteja no estado correto
+          document.getElementById('miniPlayBtn').textContent = '▶️';
         });
       // Configura download
       downloadBtn.onclick = () => {
@@ -1105,22 +1120,30 @@
       document.getElementById('miniCover').src = musica.capa;
       document.getElementById('miniTitulo').textContent = musica.titulo;
       document.getElementById('miniArtista').textContent = musica.artista;
-      document.getElementById('miniPlayBtn').textContent = '⏸️';
       miniPlayer.style.display = 'flex';
     }
+    // ✅ CONTROLE DE PLAY REFORÇADO
     function togglePlay() {
+      if (audio.src === '' || !playlistAtual.length) {
+        alert("Nenhuma música selecionada. Escolha uma música para começar.");
+        return;
+      }
       if (audio.paused) {
-        audio.play().catch(e => {
-          console.error("Erro ao reproduzir:", e);
-          alert("Erro ao iniciar reprodução.");
-        });
-        document.getElementById('miniPlayBtn').textContent = '⏸️';
-        // Animação de pulso
-        const playBtn = document.getElementById('miniPlayBtn');
-        playBtn.style.transform = 'scale(1.15)';
-        setTimeout(() => {
-          playBtn.style.transform = 'scale(1)';
-        }, 200);
+        audio.play()
+          .then(() => {
+            document.getElementById('miniPlayBtn').textContent = '⏸️';
+            // Animação de pulso
+            const playBtn = document.getElementById('miniPlayBtn');
+            playBtn.style.transform = 'scale(1.15)';
+            setTimeout(() => {
+              playBtn.style.transform = 'scale(1)';
+            }, 200);
+          })
+          .catch(e => {
+            console.error("Erro ao reproduzir:", e);
+            alert("Erro ao iniciar reprodução. Tente novamente.");
+            document.getElementById('miniPlayBtn').textContent = '▶️';
+          });
       } else {
         audio.pause();
         document.getElementById('miniPlayBtn').textContent = '▶️';
